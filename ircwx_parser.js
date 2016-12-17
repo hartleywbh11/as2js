@@ -1,3 +1,75 @@
+function parseJoin(userstr, flags, chan) {
+   var oUser: Object = {
+     nick: null,
+     fullident: null,
+     ident: null,
+     host: null,
+     ilevel: 0,
+     iprofile: 0,
+     away: false,
+     awaymsg: "",
+     voice: false,
+     ignore: false
+   };
+   var pos1: Number = -1,
+     pos2: Number = -1;
+
+   pos1 = userstr.indexOf("!");
+   oUser.nick = userstr.substr(0, pos1);
+   pos1++;
+   pos2 = userstr.indexOf("@", pos1);
+   oUser.fullident = userstr.substr(pos1, (pos2 - pos1));
+   pos1 = oUser.fullident.lastIndexOf(".") + 1;
+   oUser.ident = oUser.fullident.substr(pos1);
+   pos2++;
+   oUser.host = userstr.substr(pos2);
+
+   oUser.ilevel = 0;
+
+   switch (flags.charAt(0)) {
+     case "A":
+       oUser.away = true;
+       break;
+     case "U":
+       oUser.away = false;
+       break;
+   }
+
+   switch (flags.substr(1, 2)) {
+     case "UN":
+       oUser.iprofile = _global.NoProfile;
+       break;
+     case "UP":
+       oUser.iprofile = _global.NoGenderWPic;
+       break;
+     case "FN":
+       oUser.iprofile = _global.Female;
+       break;
+     case "MN":
+       oUser.iprofile = _global.Male;
+       break;
+     case "FP":
+       oUser.iprofile = _global.FemaleWPic;
+       break;
+     case "MP":
+       oUser.iprofile = _global.MaleWPic;
+       break;
+   }
+
+   switch (flags.charAt(3)) {
+     case "V":
+       oUser.voice = true;
+       break;
+     case "N":
+       oUser.voice = false;
+       break;
+   }
+
+   if (oUser.nick.charAt(0) == "^") oUser.ilevel = _global.IsStaff;
+   onJoin(oUser, chan.substr(1)); //strip colon before channel name
+ }
+ // End of the function
+
 function parseString(raw) {
 
   if (raw.length > 0) {
