@@ -19,7 +19,7 @@
  *  02111-1307  USA.
  */
 
-enum UserLevels {
+const enum UserLevels {
     Staff = 128,
     Superowner = 64,
     Owner = 32,
@@ -27,7 +27,7 @@ enum UserLevels {
     Helpop = 8
 }
 
-enum UserProfileIcons {
+const enum UserProfileIcons {
     NoProfile = 0,
     NoGender,
     NoGenderWPic,
