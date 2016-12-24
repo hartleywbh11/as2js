@@ -52,8 +52,8 @@ class IRCmUser {
 
 function parseJoin(userstr, flags, chan) { //-- Function converstion completed 19-Dec-2016 HY
 
-    var oUser = new IRCmUser();
-    var pos1: number = -1, pos2: number = -1;
+    let oUser = new IRCmUser();
+    let pos1: number = -1, pos2: number = -1;
 
     pos1 = userstr.indexOf("!");
     oUser.nick = userstr.substr(0, pos1);
