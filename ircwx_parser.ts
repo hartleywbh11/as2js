@@ -51,14 +51,16 @@ class IRCmUser {
 }
 
 //ToDo: move to core library.
-type fnWriteToPresenterDef = (str: string) => void;
+type fnWriteToPresenterDef = (s: string) => void;
 //ToDo: move to core library.
-type fnWriteToConnectionDef = (str: string) => void;
+type fnWriteToConnectionDef = (s: string) => void;
 
 // <global variables>
 let DebugArray: string[];
 let fnWriteToPresenter: fnWriteToPresenterDef;
 let IRCSend: fnWriteToConnectionDef; //ToDo: rename later to fnWriteToConnection
+
+let ServerName: string, UserName: string, bConnectionRegistered: boolean;
 // </global variables>
 
 function AddtoDebugArray(s: string) { //-- Function converstion completed 25-Dec-2016 HY
@@ -66,12 +68,20 @@ function AddtoDebugArray(s: string) { //-- Function converstion completed 25-Dec
     if (DebugArray.length > 50) DebugArray.splice(0, 1);
 }
 
+function getNick(dat:string[]) {
+    return (dat.slice(0, dat.indexOf("!")));
+}
+
+//ToDo: this function seems better in controller.
+function GotoRoom() {
+}
+
 function handleError(sError) { //-- Function converstion completed 25-Dec-2016 HY
     //ToDo: move out presentation logic from parser.
     Write("<font color='#FF0000'>Error: " + sError + "</font>");
 }
 
-function parseJoin(userstr, flags, chan) { //-- Function converstion completed 19-Dec-2016 HY
+function parseJoin(userstr:string, flags:string, chan:string) { //-- Function converstion completed 19-Dec-2016 HY
 
     let oUser = new IRCmUser();
     let pos1: number = -1, pos2: number = -1;
@@ -159,30 +169,34 @@ function parseString(raw) { //-- Function converstion partial complete 25-Dec-20
 
         //conversion completed till here
 
-        //switch (toks[1].toLowerCase()) {
-        //    case "001": //Welcome to the Internet Relay Network
-        //        ServerName = toks[0];
-        //        this.UserName = toks[2];
-        //        onSetNick(this.UserName);
-        //        _bConnectionRegistered = true;
-        //        GotoRoom();
-        //        break;
+        switch (toks[1].toLowerCase()) {
+            case "001": //Welcome to the Internet Relay Network
+                ServerName = toks[0];
+                UserName = toks[2];
+                //ToDo: later
+                //onSetNick(this.UserName);
+                bConnectionRegistered = true;
+                GotoRoom();
+                break;
 
-        //    case "251":
-        //        onNoticeServerMessage(toks.slice(3).join(" ").substr(1));
-        //        break;
+            case "251":
+                //ToDo: later
+                //onNoticeServerMessage(toks.slice(3).join(" ").substr(1));
+                break;
 
-        //    case "265":
-        //        onNoticeServerMessage(toks.slice(3).join(" ").substr(1));
-        //        break;
+            case "265":
+                //ToDo: later
+                //onNoticeServerMessage(toks.slice(3).join(" ").substr(1));
+                break;
 
-        //    case "join":
-        //        parseJoin(toks[0], toks[2], toks[3]);
-        //        break;
+            case "join":
+                parseJoin(toks[0], toks[2], toks[3]);
+                break;
 
-        //    case "quit":
-        //        onQuit(getNick(toks[0]));
-        //        break;
+            case "quit":
+                //ToDo: later
+                //onQuit(getNick(toks[0]));
+                break;
 
         //    case "part":
         //        onPart(getNick(toks[0]), toks[2]);
@@ -367,8 +381,8 @@ function parseString(raw) { //-- Function converstion partial complete 25-Dec-20
 
         //        //unhandledCommand(ircmsg);
         //        break;
-        //}
-        //// End of switch
+        }
+        // End of switch
     }
     // end if
 }
