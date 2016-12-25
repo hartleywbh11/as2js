@@ -68,7 +68,7 @@ function AddtoDebugArray(s: string) { //-- Function converstion completed 25-Dec
     if (DebugArray.length > 50) DebugArray.splice(0, 1);
 }
 
-function getNick(dat:string[]) {
+function getNick(dat:string) {
     return (dat.slice(0, dat.indexOf("!")));
 }
 
@@ -76,7 +76,7 @@ function getNick(dat:string[]) {
 function GotoRoom() {
 }
 
-function handleError(sError) { //-- Function converstion completed 25-Dec-2016 HY
+function handleError(sError:string) { //-- Function converstion completed 25-Dec-2016 HY
     //ToDo: move out presentation logic from parser.
     Write("<font color='#FF0000'>Error: " + sError + "</font>");
 }
@@ -167,8 +167,6 @@ function parseString(raw) { //-- Function converstion partial complete 25-Dec-20
         }
         // End of switch
 
-        //conversion completed till here
-
         switch (toks[1].toLowerCase()) {
             case "001": //Welcome to the Internet Relay Network
                 ServerName = toks[0];
@@ -197,6 +195,8 @@ function parseString(raw) { //-- Function converstion partial complete 25-Dec-20
                 //ToDo: later
                 //onQuit(getNick(toks[0]));
                 break;
+
+                //conversion completed till here.
 
         //    case "part":
         //        onPart(getNick(toks[0]), toks[2]);
