@@ -394,3 +394,8 @@ function PingReply(s: string) { //-- Function converstion completed 25-Dec-2016 
 function Write(s: string) { //-- Function converstion completed 25-Dec-2016 HY
     fnWriteToPresenter(s);
 }
+
+//Test function
+function IRCmParserTestFun() : boolean {
+    return true;
+}
