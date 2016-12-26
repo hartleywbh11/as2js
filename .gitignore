@@ -49,3 +49,5 @@ Temporary Items
 #Typescript file support files
 ircwx_parser.js.map
 ircwx_parser.js
+*.map
+*.js
