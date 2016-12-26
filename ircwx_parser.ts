@@ -389,6 +389,7 @@ namespace IRCwxParser {
         // end if
     }
 
+    //Note: Ping reply is part of ircwx protocol, keep it here. 
     function PingReply(s: string) : string { //-- Function converstion completed 25-Dec-2016 HY
         //IRCSend("PONG " + s);
         return "PONG " + s;

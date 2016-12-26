@@ -20,8 +20,6 @@
  *  02111-1307  USA.
  */
 
-/// <reference path="ircwx_parser.ts" />
-
 namespace NBChatController {
     //Note: currently using namespace, when all major browsers have support for module loading then it can be changed to module here. --HY 26-Dec-2016.
     import ParserWx = IRCwxParser;
