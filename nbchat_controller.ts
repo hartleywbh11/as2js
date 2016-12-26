@@ -24,14 +24,18 @@ namespace NBChatController {
     //Note: currently using namespace, when all major browsers have support for module loading then it can be changed to module here. --HY 26-Dec-2016.
     import ParserWx = IRCwxParser;
 
-    export function WChatMain(): number {
+    export function NBChatMain(): number {
         let raw_str = "";
 
         let parser_item = ParserWx.Parse(raw_str);
 
-        switch (parser_item.Type) {
-            case NBChatCore.ParserReturnItemTypes.PingReply:
-                //ToDo: send it to connection.
+        if (parser_item != null) {
+
+            switch (parser_item.Type) {
+                case NBChatCore.ParserReturnItemTypes.PingReply:
+                    //ToDo: send it to connection.
+                    break;
+            }
         }
 
         return 0;
