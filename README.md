@@ -18,6 +18,6 @@ Any help is appreciated :)
 ```sh
  function PingReply(s: string) : string { //-- Function converstion completed 25-Dec-2016 HY
  ```
- - If there is a problem/bug/fix needed in your translated code, fix it please unless you are leaving the project then somebody else will take over. Any new person would need time to understand it and best person to fix the code is the person who has written it, hence, this rule. But this is not hard and fast rule, it is just to keep things easier to manage.
+ - If there is a problem/bug/fix needed in your translated code, fix it please unless you are leaving the project then somebody else will take over. Any new person would need time to understand it and best person to fix the code is the person who has written it, hence, this rule. But this is not a hard and fast rule, it is just to keep things easier to manage.
  - Our Typescript projects follow standard guidelines and conventions of MS Typescript project: https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines . But naming for module local or function local variable like "let parser_item = ..." that improves readability is ok.
  
