@@ -19,7 +19,10 @@
  *  02111-1307  USA.
  */
 
+
+
 namespace IRCwxParser {
+    "use strict";
 
     const enum UserLevels {
         Staff = 128,
@@ -52,40 +55,43 @@ namespace IRCwxParser {
         ignore: boolean = false;
     }
 
-    //ToDo: move to core library.
+    // ToDo: move to core library.
     type fnWriteToPresenterDef = (s: string) => void;
-    //ToDo: move to core library.
+    // ToDo: move to core library.
     type fnWriteToConnectionDef = (s: string) => void;
 
     // <global variables>
-    let DebugArray: string[];
+    let debugArray: string[];
     let fnWriteToPresenter: fnWriteToPresenterDef;
-    let IRCSend: fnWriteToConnectionDef; //ToDo: rename later to fnWriteToConnection
+    //let IRCSend: fnWriteToConnectionDef; // ToDo: rename later to fnWriteToConnection
 
     let ServerName: string, UserName: string, bConnectionRegistered: boolean;
     // </global variables>
 
-    function AddtoDebugArray(s: string) { //-- Function converstion completed 25-Dec-2016 HY
-        DebugArray.push(s);
-        if (DebugArray.length > 50) DebugArray.splice(0, 1);
+    // ToDo: move to controller?
+    function AddtoDebugArray(s: string): void { // -- Function converstion completed 25-Dec-2016 HY
+        debugArray.push(s);
+        if (debugArray.length > 50) {
+            debugArray.splice(0, 1);
+        }
     }
 
-    function getNick(dat: string) {
+    function getNick(dat: string): string {
         return (dat.slice(0, dat.indexOf("!")));
     }
 
-    //ToDo: this function seems better in controller.
-    function GotoRoom() {
+    // ToDo: this function seems better in controller.
+    function GotoRoom(): void {
     }
 
-    function handleError(sError: string) { //-- Function converstion completed 25-Dec-2016 HY
-        //ToDo: move out presentation logic from parser.
-        Write("<font color='#FF0000'>Error: " + sError + "</font>");
+    function handleError(sError: string): void { // -- Function converstion completed 25-Dec-2016 HY
+        // ToDo: move out presentation logic from parser.
+        write("<font color='#FF0000'>Error: " + sError + "</font>");
     }
 
-    function parseJoin(userstr: string, flags: string, chan: string) { //-- Function converstion completed 19-Dec-2016 HY
+    function parseJoin(userstr: string, flags: string, chan: string): void { // -- Function converstion completed 19-Dec-2016 HY
 
-        let oUser = new IRCmUser();
+        let oUser: IRCmUser = new IRCmUser();
         let pos1: number = -1, pos2: number = -1;
 
         pos1 = userstr.indexOf("!");
@@ -139,54 +145,56 @@ namespace IRCwxParser {
                 break;
         }
 
-        if (oUser.nick.charAt(0) == "^") oUser.ilevel = UserLevels.Staff;
-        //ToDo: later
-        //onJoin(oUser, chan.substr(1)); //strip colon before channel name
+        if (oUser.nick.charAt(0) === "^") {
+            oUser.ilevel = UserLevels.Staff;
+        }
+        // ToDo: later
+        // onJoin(oUser, chan.substr(1)); //strip colon before channel name
     }
 
-    //**Important Note: kept "NBChatCore." to show which one is used from core modules/namespace. -- HY 26-Dec-2016
-    export function Parse(raw: string): NBChatCore.CommonParserReturnItem { //-- Function converstion partial complete 26-Dec-2016 HY
+    // **Important Note: kept "NBChatCore." to show which one is used from core modules/namespace. -- HY 26-Dec-2016
+    export function parse(raw: string): NBChatCore.CommonParserReturnItem { // -- Function converstion partial complete 26-Dec-2016 HY
 
         if (raw.length > 0) {
             var toks: string[] = [];
-            var ircmsg = (raw.charAt(0) == ":") ? raw.substr(1) : raw;
+            var ircmsg: string = (raw.charAt(0) === ":") ? raw.substr(1) : raw;
 
-            //trace incoming
-            //Write("received: " + ircmsg);
+            // trace incoming
+            // Write("received: " + ircmsg);
             AddtoDebugArray("<<:" + ircmsg);
 
             toks = ircmsg.split(" ");
 
-            //if (toks.length > 4) Write("toks[4](u): " + toks[4]);
+            // if (toks.length > 4) Write("toks[4](u): " + toks[4]);
 
             switch (toks[0].toLowerCase()) {
                 case "error":
-                    handleError(toks.join(" ")); //ToDo: fix later.
+                    handleError(toks.join(" ")); // ToDo: fix later.
                     return null;
 
                 case "ping":
-                    return { Type: NBChatCore.ParserReturnItemTypes.PingReply, ReturnMessage: PingReply(toks[1]) };
+                    return { Type: NBChatCore.ParserReturnItemTypes.PingReply, ReturnMessage: pingReply(toks[1]) };
             }
             // End of switch
 
             switch (toks[1].toLowerCase()) {
-                case "001": //Welcome to the Internet Relay Network
+                case "001": // Welcome to the Internet Relay Network
                     ServerName = toks[0];
                     UserName = toks[2];
-                    //ToDo: later
-                    //onSetNick(this.UserName);
+                    // ToDo: later
+                    // onSetNick(this.UserName);
                     bConnectionRegistered = true;
                     GotoRoom();
                     break;
 
                 case "251":
-                    //ToDo: later
-                    //onNoticeServerMessage(toks.slice(3).join(" ").substr(1));
+                    // ToDo: later
+                    // onNoticeServerMessage(toks.slice(3).join(" ").substr(1));
                     break;
 
                 case "265":
-                    //ToDo: later
-                    //onNoticeServerMessage(toks.slice(3).join(" ").substr(1));
+                    // ToDo: later
+                    // onNoticeServerMessage(toks.slice(3).join(" ").substr(1));
                     break;
 
                 case "join":
@@ -194,7 +202,7 @@ namespace IRCwxParser {
                     break;
 
                 case "quit":
-                    //ToDo: later
+                    // ToDo: later
                     //onQuit(getNick(toks[0]));
                     break;
 
@@ -390,17 +398,17 @@ namespace IRCwxParser {
     }
 
     //Note: Ping reply is part of ircwx protocol, keep it here. 
-    function PingReply(s: string) : string { //-- Function converstion completed 25-Dec-2016 HY
+    function pingReply(s: string): string { //-- Function converstion completed 25-Dec-2016 HY
         //IRCSend("PONG " + s);
         return "PONG " + s;
     }
 
-    function Write(s: string) { //-- Function converstion completed 25-Dec-2016 HY
+    function write(s: string): void { //-- Function converstion completed 25-Dec-2016 HY
         fnWriteToPresenter(s);
     }
 
     //Test function
-    export function IRCmParserTestFun(): boolean {
+    export function ircmParserTestFun(): boolean {
         return true;
     }
 }

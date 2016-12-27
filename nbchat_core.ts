@@ -20,13 +20,18 @@
  *  02111-1307  USA.
  */
 
+function IsUndefinedOrNull(object: any): boolean {
+    if (object == undefined || object == null) return true;
+    return false;
+}
+
 namespace NBChatCore {
-   export const enum ParserReturnItemTypes {
+    export const enum ParserReturnItemTypes {
         Undefined = 0,
         PingReply
     }
 
-   export  class CommonParserReturnItem {
+    export class CommonParserReturnItem {
         Type: ParserReturnItemTypes;
         ReturnMessage: string;
     }
