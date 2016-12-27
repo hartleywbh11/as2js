@@ -6,7 +6,7 @@ Source files to convert are here:
 
 Anyone can contribute by forking the master and submit updates to be incorporated into the master.
 
-Any help is appriciated :)
+Any help is appreciated :)
 
 #Instructions
 - Since I'm most familiar with flash/actionscript code, I'll add to .ts files functions to translate.
