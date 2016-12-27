@@ -19,8 +19,6 @@
  *  02111-1307  USA.
  */
 
-
-
 namespace IRCwxParser {
     "use strict";
 
@@ -61,7 +59,7 @@ namespace IRCwxParser {
     type fnWriteToConnectionDef = (s: string) => void;
 
     // <global variables>
-    let debugArray: string[];
+    let debugArray: string[] = [];
     let fnWriteToPresenter: fnWriteToPresenterDef;
     //let IRCSend: fnWriteToConnectionDef; // ToDo: rename later to fnWriteToConnection
 
@@ -156,8 +154,8 @@ namespace IRCwxParser {
     export function parse(raw: string): NBChatCore.CommonParserReturnItem { // -- Function converstion partial complete 26-Dec-2016 HY
 
         if (raw.length > 0) {
-            var toks: string[] = [];
-            var ircmsg: string = (raw.charAt(0) === ":") ? raw.substr(1) : raw;
+            let toks: string[] = [];
+            let ircmsg: string = (raw.charAt(0) === ":") ? raw.substr(1) : raw;
 
             // trace incoming
             // Write("received: " + ircmsg);

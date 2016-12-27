@@ -21,11 +21,14 @@
  */
 
 function IsUndefinedOrNull(object: any): boolean {
-    if (object == undefined || object == null) return true;
+    "use strict";
+    if (object === undefined || object === null) { return true; }
     return false;
 }
 
 namespace NBChatCore {
+    "use strict";
+
     export const enum ParserReturnItemTypes {
         Undefined = 0,
         PingReply

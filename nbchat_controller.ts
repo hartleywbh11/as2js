@@ -22,6 +22,7 @@
 
 namespace NBChatController {
     "use strict";
+
     //Note: currently using namespace, when all major browsers have support for module loading then it can be changed to module here. --HY 26-Dec-2016.
     import ParserWx = IRCwxParser;
 
