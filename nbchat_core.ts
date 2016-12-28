@@ -33,7 +33,11 @@ namespace NBChatCore {
         Undefined = 0,
         PingReply,
         IRCwxError,
-        RPL_001_WELCOME
+        RPL_001_WELCOME,
+        RPL_251_LUSERCLIENT,
+        RPL_265_LOCALUSERS,
+        Join,
+        Quit
     }
 
     export type fnWriteToPresenterDef = (s: string) => void;
@@ -43,8 +47,46 @@ namespace NBChatCore {
         userName: string;
     }
 
+    export const enum UserLevels {
+        Staff = 128,
+        Superowner = 64,
+        Owner = 32,
+        Host = 16,
+        Helpop = 8
+    }
+
+    export const enum UserProfileIcons {
+        NoProfile = 0,
+        NoGender,
+        NoGenderWPic,
+        Female,
+        FemaleWPic,
+        Male,
+        MaleWPic
+    }
+
+    export class IRCmUser {
+        nick: string;
+        fullident: string;
+        ident: string;
+        host: string = null;
+        ilevel: number = 0;
+        iprofile: number = 0;
+        away: boolean = false;
+        awaymsg: string = "";
+        voice: boolean = false;
+        ignore: boolean = false;
+    }
+
+    export class JoinCls {
+        user: IRCmUser;
+        ircmChannelName: string;
+    }
+
     export class CommonParserReturnItem {
-        Type: ParserReturnItemTypes;
-        ReturnMessage: string | Rpl001Welcome;
+        type: ParserReturnItemTypes;
+
+        // Returned value
+        rval: string | Rpl001Welcome | JoinCls;
     }
 }

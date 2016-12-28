@@ -30,31 +30,61 @@ namespace NBChatController {
 
     // <function_pointers>
     let fnWriteToPresenter: NBChatCore.fnWriteToPresenterDef;
+    let IRCSend: NBChatConnection.fnWriteToConnectionDef; // ToDo: rename later to fnWriteToConnection
+
+    let onNoticeServerMessage: Function;
+    let onJoin: Function;
+    let onQuit: Function;
     // </function_pointers>
 
     // <variables>
+    let debugArray: string[] = [];
+
     let ServerName: string, UserName: string, bConnectionRegistered: boolean;
-     // </variables>
+    // </variables>
+
+    function addToDebugArray(s: string): void { // -- Function converstion completed 25-Dec-2016 HY
+        debugArray.push(s);
+        if (debugArray.length > 50) {
+            debugArray.splice(0, 1);
+        }
+    }
+
+    function GotoChannel(): void {
+
+    }
 
     export function nbChatMain(): number {
-        let raw_str: string = "";
+        // ToDo:
+        return 0;
+    }
+
+    function onNbConnectionData(raw_str: string): void {
+        if (IsUndefinedOrNull(raw_str)) return;
+        if (raw_str.length === 0) return;
+
+        raw_str = (raw_str.charAt(0) === ":") ? raw_str.substr(1) : raw_str;
+
+        // trace incoming
+        // Write("received: " + raw_str);
+        addToDebugArray("<<:" + raw_str);
 
         let parser_item: NBChatCore.CommonParserReturnItem = ParserWx.parse(raw_str);
 
         if (!IsUndefinedOrNull(parser_item)) {
 
-            switch (parser_item.Type) {
+            switch (parser_item.type) {
                 case NBChatCore.ParserReturnItemTypes.PingReply:
-                    //ToDo: send it to connection.
+                    IRCSend(<string>parser_item.rval);
                     break;
 
                 case NBChatCore.ParserReturnItemTypes.IRCwxError:
-                    handleError(<string>parser_item.ReturnMessage);
+                    handleError(<string>parser_item.rval);
                     break;
 
                 case NBChatCore.ParserReturnItemTypes.RPL_001_WELCOME:
                     {
-                        let rpl_001 = <NBChatCore.Rpl001Welcome>parser_item.ReturnMessage;
+                        let rpl_001: NBChatCore.Rpl001Welcome = <NBChatCore.Rpl001Welcome>parser_item.rval;
                         ServerName = rpl_001.serverName;
                         UserName = rpl_001.userName;
                         // ToDo: later
@@ -63,14 +93,24 @@ namespace NBChatController {
                         GotoChannel();
                     }
                     break;
+
+                case NBChatCore.ParserReturnItemTypes.RPL_251_LUSERCLIENT:
+                case NBChatCore.ParserReturnItemTypes.RPL_265_LOCALUSERS:
+                    onNoticeServerMessage(<string>parser_item.rval);
+                    break;
+
+                case NBChatCore.ParserReturnItemTypes.Join:
+                    {
+                        let join_item: NBChatCore.JoinCls = <NBChatCore.JoinCls>parser_item.rval;
+                        onJoin(join_item.user, join_item.ircmChannelName);
+                    }
+                    break;
+
+                case NBChatCore.ParserReturnItemTypes.Quit:
+                    onQuit(<string>parser_item.rval);
+                    break;
             }
         }
-
-        return 0;
-    }
-
-    function GotoChannel(): void {
-
     }
 
     function WriteToPresenter(s: string): void { //-- Function converstion completed 25-Dec-2016 HY

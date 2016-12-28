@@ -22,61 +22,15 @@
 namespace IRCwxParser {
     "use strict";
 
-    const enum UserLevels {
-        Staff = 128,
-        Superowner = 64,
-        Owner = 32,
-        Host = 16,
-        Helpop = 8
-    }
-
-    const enum UserProfileIcons {
-        NoProfile = 0,
-        NoGender,
-        NoGenderWPic,
-        Female,
-        FemaleWPic,
-        Male,
-        MaleWPic
-    }
-
-    class IRCmUser {
-        nick: string;
-        fullident: string;
-        ident: string;
-        host: string = null;
-        ilevel: number = 0;
-        iprofile: number = 0;
-        away: boolean = false;
-        awaymsg: string = "";
-        voice: boolean = false;
-        ignore: boolean = false;
-    }
-
-
-    // ToDo: move to core library.
-    type fnWriteToConnectionDef = (s: string) => void;
-
-    // <global variables>
-    let debugArray: string[] = [];
-
-    //let IRCSend: fnWriteToConnectionDef; // ToDo: rename later to fnWriteToConnection
-
-    // </global variables>
-
-    // ToDo: move to controller?
-    function AddtoDebugArray(s: string): void { // -- Function converstion completed 25-Dec-2016 HY
-        debugArray.push(s);
-        if (debugArray.length > 50) {
-            debugArray.splice(0, 1);
-        }
-    }
+    import IRCmUser = NBChatCore.IRCmUser;
+    import UserProfileIcons = NBChatCore.UserProfileIcons;
+    import UserLevels = NBChatCore.UserLevels;
 
     function getNick(dat: string): string {
         return (dat.slice(0, dat.indexOf("!")));
     }
 
-    function parseJoin(userstr: string, flags: string, chan: string): void { // -- Function converstion completed 19-Dec-2016 HY
+    function parseJoin(userstr: string, flags: string, chan: string): NBChatCore.JoinCls { // -- Function converstion completed 19-Dec-2016 HY
 
         let oUser: IRCmUser = new IRCmUser();
         let pos1: number = -1, pos2: number = -1;
@@ -135,20 +89,15 @@ namespace IRCwxParser {
         if (oUser.nick.charAt(0) === "^") {
             oUser.ilevel = UserLevels.Staff;
         }
-        // ToDo: later
-        // onJoin(oUser, chan.substr(1)); //strip colon before channel name
+
+        return { user: oUser, ircmChannelName: chan.substr(1) }; //strip colon before channel name
     }
 
     // **Important Note: kept "NBChatCore." to show which one is used from core modules/namespace. -- HY 26-Dec-2016
-    export function parse(raw: string): NBChatCore.CommonParserReturnItem { // -- Function converstion partial complete 26-Dec-2016 HY
+    export function parse(ircmsg: string): NBChatCore.CommonParserReturnItem { // -- Function converstion partial complete 26-Dec-2016 HY
 
-        if (raw.length > 0) {
+        if (ircmsg.length > 0) {
             let toks: string[] = [];
-            let ircmsg: string = (raw.charAt(0) === ":") ? raw.substr(1) : raw;
-
-            // trace incoming
-            // Write("received: " + ircmsg);
-            AddtoDebugArray("<<:" + ircmsg);
 
             toks = ircmsg.split(" ");
 
@@ -156,35 +105,28 @@ namespace IRCwxParser {
 
             switch (toks[0].toLowerCase()) {
                 case "error":
-                    return { Type: NBChatCore.ParserReturnItemTypes.IRCwxError, ReturnMessage: toks.join(" ") };
+                    return { type: NBChatCore.ParserReturnItemTypes.IRCwxError, rval: toks.join(" ") };
 
                 case "ping":
-                    return { Type: NBChatCore.ParserReturnItemTypes.PingReply, ReturnMessage: pingReply(toks[1]) };
+                    return { type: NBChatCore.ParserReturnItemTypes.PingReply, rval: pingReply(toks[1]) };
             }
             // End of switch
 
             switch (toks[1].toLowerCase()) {
                 case "001": // Welcome to the Internet Relay Network
-                    return { Type: NBChatCore.ParserReturnItemTypes.RPL_001_WELCOME, ReturnMessage: <NBChatCore.Rpl001Welcome>{ serverName: toks[0], userName: toks[2] } };
+                    return { type: NBChatCore.ParserReturnItemTypes.RPL_001_WELCOME, rval: <NBChatCore.Rpl001Welcome>{ serverName: toks[0], userName: toks[2] } };
 
                 case "251":
-                    // ToDo: later
-                    // onNoticeServerMessage(toks.slice(3).join(" ").substr(1));
-                    break;
+                    return { type: NBChatCore.ParserReturnItemTypes.RPL_251_LUSERCLIENT, rval: toks.slice(3).join(" ").substr(1) };
 
                 case "265":
-                    // ToDo: later
-                    // onNoticeServerMessage(toks.slice(3).join(" ").substr(1));
-                    break;
+                    return { type: NBChatCore.ParserReturnItemTypes.RPL_265_LOCALUSERS, rval: toks.slice(3).join(" ").substr(1) };
 
                 case "join":
-                    parseJoin(toks[0], toks[2], toks[3]);
-                    break;
+                    return { type: NBChatCore.ParserReturnItemTypes.Join, rval: parseJoin(toks[0], toks[2], toks[3]) };
 
                 case "quit":
-                    // ToDo: later
-                    //onQuit(getNick(toks[0]));
-                    break;
+                    return { type: NBChatCore.ParserReturnItemTypes.Quit, rval: getNick(toks[0]) };
 
                 //conversion completed till here.
 
