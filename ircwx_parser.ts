@@ -53,17 +53,15 @@ namespace IRCwxParser {
         ignore: boolean = false;
     }
 
-    // ToDo: move to core library.
-    type fnWriteToPresenterDef = (s: string) => void;
+
     // ToDo: move to core library.
     type fnWriteToConnectionDef = (s: string) => void;
 
     // <global variables>
     let debugArray: string[] = [];
-    let fnWriteToPresenter: fnWriteToPresenterDef;
+
     //let IRCSend: fnWriteToConnectionDef; // ToDo: rename later to fnWriteToConnection
 
-    let ServerName: string, UserName: string, bConnectionRegistered: boolean;
     // </global variables>
 
     // ToDo: move to controller?
@@ -76,15 +74,6 @@ namespace IRCwxParser {
 
     function getNick(dat: string): string {
         return (dat.slice(0, dat.indexOf("!")));
-    }
-
-    // ToDo: this function seems better in controller.
-    function GotoRoom(): void {
-    }
-
-    function handleError(sError: string): void { // -- Function converstion completed 25-Dec-2016 HY
-        // ToDo: move out presentation logic from parser.
-        write("<font color='#FF0000'>Error: " + sError + "</font>");
     }
 
     function parseJoin(userstr: string, flags: string, chan: string): void { // -- Function converstion completed 19-Dec-2016 HY
@@ -167,8 +156,7 @@ namespace IRCwxParser {
 
             switch (toks[0].toLowerCase()) {
                 case "error":
-                    handleError(toks.join(" ")); // ToDo: fix later.
-                    return null;
+                    return { Type: NBChatCore.ParserReturnItemTypes.IRCwxError, ReturnMessage: toks.join(" ") };
 
                 case "ping":
                     return { Type: NBChatCore.ParserReturnItemTypes.PingReply, ReturnMessage: pingReply(toks[1]) };
@@ -177,13 +165,7 @@ namespace IRCwxParser {
 
             switch (toks[1].toLowerCase()) {
                 case "001": // Welcome to the Internet Relay Network
-                    ServerName = toks[0];
-                    UserName = toks[2];
-                    // ToDo: later
-                    // onSetNick(this.UserName);
-                    bConnectionRegistered = true;
-                    GotoRoom();
-                    break;
+                    return { Type: NBChatCore.ParserReturnItemTypes.RPL_001_WELCOME, ReturnMessage: <NBChatCore.Rpl001Welcome>{ serverName: toks[0], userName: toks[2] } };
 
                 case "251":
                     // ToDo: later
@@ -397,12 +379,7 @@ namespace IRCwxParser {
 
     //Note: Ping reply is part of ircwx protocol, keep it here. 
     function pingReply(s: string): string { //-- Function converstion completed 25-Dec-2016 HY
-        //IRCSend("PONG " + s);
         return "PONG " + s;
-    }
-
-    function write(s: string): void { //-- Function converstion completed 25-Dec-2016 HY
-        fnWriteToPresenter(s);
     }
 
     //Test function

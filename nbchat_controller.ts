@@ -24,7 +24,17 @@ namespace NBChatController {
     "use strict";
 
     //Note: currently using namespace, when all major browsers have support for module loading then it can be changed to module here. --HY 26-Dec-2016.
+    // <imports>
     import ParserWx = IRCwxParser;
+    // </imports>
+
+    // <function_pointers>
+    let fnWriteToPresenter: NBChatCore.fnWriteToPresenterDef;
+    // </function_pointers>
+
+    // <variables>
+    let ServerName: string, UserName: string, bConnectionRegistered: boolean;
+     // </variables>
 
     export function nbChatMain(): number {
         let raw_str: string = "";
@@ -37,9 +47,39 @@ namespace NBChatController {
                 case NBChatCore.ParserReturnItemTypes.PingReply:
                     //ToDo: send it to connection.
                     break;
+
+                case NBChatCore.ParserReturnItemTypes.IRCwxError:
+                    handleError(<string>parser_item.ReturnMessage);
+                    break;
+
+                case NBChatCore.ParserReturnItemTypes.RPL_001_WELCOME:
+                    {
+                        let rpl_001 = <NBChatCore.Rpl001Welcome>parser_item.ReturnMessage;
+                        ServerName = rpl_001.serverName;
+                        UserName = rpl_001.userName;
+                        // ToDo: later
+                        // onSetNick(this.UserName);
+                        bConnectionRegistered = true;
+                        GotoChannel();
+                    }
+                    break;
             }
         }
 
         return 0;
+    }
+
+    function GotoChannel(): void {
+
+    }
+
+    function WriteToPresenter(s: string): void { //-- Function converstion completed 25-Dec-2016 HY
+        fnWriteToPresenter(s);
+    }
+
+    // ** Presenter functions here; they will be moved later.
+    function handleError(sError: string): void { // -- Function converstion completed 25-Dec-2016 HY
+        // ToDo: move out presentation logic from parser.
+        WriteToPresenter("<font color='#FF0000'>Error: " + sError + "</font>");
     }
 }

@@ -31,11 +31,20 @@ namespace NBChatCore {
 
     export const enum ParserReturnItemTypes {
         Undefined = 0,
-        PingReply
+        PingReply,
+        IRCwxError,
+        RPL_001_WELCOME
+    }
+
+    export type fnWriteToPresenterDef = (s: string) => void;
+
+    export class Rpl001Welcome {
+        serverName: string;
+        userName: string;
     }
 
     export class CommonParserReturnItem {
         Type: ParserReturnItemTypes;
-        ReturnMessage: string;
+        ReturnMessage: string | Rpl001Welcome;
     }
 }
