@@ -37,7 +37,8 @@ namespace NBChatCore {
         RPL_251_LUSERCLIENT,
         RPL_265_LOCALUSERS,
         Join,
-        Quit
+        Quit,
+        Part
     }
 
     export type fnWriteToPresenterDef = (s: string) => void;
@@ -83,10 +84,15 @@ namespace NBChatCore {
         ircmChannelName: string;
     }
 
+    export class PartCls {
+        nick: string;
+        ircmChannelName: string;
+    }
+
     export class CommonParserReturnItem {
         type: ParserReturnItemTypes;
 
         // Returned value
-        rval: string | Rpl001Welcome | JoinCls;
+        rval: string | Rpl001Welcome | JoinCls | PartCls;
     }
 }

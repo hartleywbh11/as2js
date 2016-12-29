@@ -35,6 +35,7 @@ namespace NBChatController {
     let onNoticeServerMessage: Function;
     let onJoin: Function;
     let onQuit: Function;
+    let onPart: Function;
     // </function_pointers>
 
     // <variables>
@@ -49,6 +50,8 @@ namespace NBChatController {
             debugArray.splice(0, 1);
         }
     }
+
+    // ToDo: function DebugArrayPrint()
 
     function GotoChannel(): void {
 
@@ -108,6 +111,13 @@ namespace NBChatController {
 
                 case NBChatCore.ParserReturnItemTypes.Quit:
                     onQuit(<string>parser_item.rval);
+                    break;
+
+                case NBChatCore.ParserReturnItemTypes.Part:
+                    {
+                        let part_item: NBChatCore.PartCls = <NBChatCore.PartCls>parser_item.rval;
+                        onPart(part_item.nick, part_item.ircmChannelName);
+                    }
                     break;
             }
         }

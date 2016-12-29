@@ -26,9 +26,13 @@ namespace IRCwxParser {
     import UserProfileIcons = NBChatCore.UserProfileIcons;
     import UserLevels = NBChatCore.UserLevels;
 
+    // ToDo: function getHost(...)
+
     function getNick(dat: string): string {
         return (dat.slice(0, dat.indexOf("!")));
     }
+
+    // ToDo: function parse324(...)
 
     function parseJoin(userstr: string, flags: string, chan: string): NBChatCore.JoinCls { // -- Function converstion completed 19-Dec-2016 HY
 
@@ -93,6 +97,10 @@ namespace IRCwxParser {
         return { user: oUser, ircmChannelName: chan.substr(1) }; //strip colon before channel name
     }
 
+    // ToDo: function parseMode(...)
+
+    // ToDo: parseNamesList(...)
+
     // **Important Note: kept "NBChatCore." to show which one is used from core modules/namespace. -- HY 26-Dec-2016
     export function parse(ircmsg: string): NBChatCore.CommonParserReturnItem { // -- Function converstion partial complete 26-Dec-2016 HY
 
@@ -128,35 +136,34 @@ namespace IRCwxParser {
                 case "quit":
                     return { type: NBChatCore.ParserReturnItemTypes.Quit, rval: getNick(toks[0]) };
 
-                //conversion completed till here.
+                // *** conversion completed till here.
 
-                //    case "part":
-                //        onPart(getNick(toks[0]), toks[2]);
-                //        break;
+                case "part":
+                    return { type: NBChatCore.ParserReturnItemTypes.Quit, rval: <NBChatCore.PartCls>{ nick: getNick(toks[0]), ircmChannelName: toks[2] } };
 
-                //    case "notice":
-                //        if (toks[0] == ServerName) {
-                //            //Server Message
-                //            if (!_bIsKicked) {
-                //                if (toks[2] == "WARNING" && raw.indexOf("join a chatroom") > 0) GotoRoom();
-                //            }
-
-                //            onNoticeServerMessage(toks.slice(2).join(" "));
-                //        } else if (toks[3].indexOf("%") == 0) {
-                //            //channel broadcast
-                //            onNoticeChanBroadcast(getNick(toks[0]), toks[3], strip(toks.slice(4).join(" ")));
-                //        } else if (toks[2].indexOf("%") < 0) {
-                //            //server broadcast
-                //            if (_bConnectionRegistered == true) onNoticeServerBroadcast(getNick(toks[0]), strip(toks.slice(3).join(" ")));
-                //            else onNoticeServerMessage(toks.slice(2).join(" "));
-                //        } else if (toks[4].indexOf(":") == 0) {
-                //            //private notice
-                //            onNoticePrivate(getNick(toks[0]), toks[2], strip(toks.slice(4).join(" ")));
-                //        } else {
-                //            //normal notice
-                //            onNotice(getNick(toks[0]), toks[2], strip(toks.slice(3).join(" ")));
+                //case "notice":
+                //    if (toks[0] == ServerName) {
+                //        //Server Message
+                //        if (!_bIsKicked) {
+                //            if (toks[2] == "WARNING" && raw.indexOf("join a chatroom") > 0) GotoRoom();
                 //        }
-                //        break;
+
+                //        onNoticeServerMessage(toks.slice(2).join(" "));
+                //    } else if (toks[3].indexOf("%") == 0) {
+                //        //channel broadcast
+                //        onNoticeChanBroadcast(getNick(toks[0]), toks[3], strip(toks.slice(4).join(" ")));
+                //    } else if (toks[2].indexOf("%") < 0) {
+                //        //server broadcast
+                //        if (_bConnectionRegistered == true) onNoticeServerBroadcast(getNick(toks[0]), strip(toks.slice(3).join(" ")));
+                //        else onNoticeServerMessage(toks.slice(2).join(" "));
+                //    } else if (toks[4].indexOf(":") == 0) {
+                //        //private notice
+                //        onNoticePrivate(getNick(toks[0]), toks[2], strip(toks.slice(4).join(" ")));
+                //    } else {
+                //        //normal notice
+                //        onNotice(getNick(toks[0]), toks[2], strip(toks.slice(3).join(" ")));
+                //    }
+                //    break;
 
                 //    case "kick":
                 //        if (toks[3].toLowerCase() == this.UserName.toLowerCase()) _bIsKicked = true; //use same case because server is case-insensitve for nicks.
@@ -323,6 +330,12 @@ namespace IRCwxParser {
     function pingReply(s: string): string { //-- Function converstion completed 25-Dec-2016 HY
         return "PONG " + s;
     }
+
+    // ToDo: function strip(dat)
+
+    // ToDo: function unhandledCommand(sCmd) //Comment: not sure about this, will see in the end.
+
+    // ToDo: function sendToChan(chan, msg) //Comment: probably better in the controller but depends on operational flow.
 
     //Test function
     export function ircmParserTestFun(): boolean {
