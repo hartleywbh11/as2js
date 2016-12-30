@@ -87,7 +87,7 @@ namespace NBChatController {
 
                 case NBChatCore.ParserReturnItemTypes.RPL_001_WELCOME:
                     {
-                        let rpl_001: NBChatCore.Rpl001Welcome = <NBChatCore.Rpl001Welcome>parser_item.rval;
+                        let rpl_001 = <NBChatCore.Rpl001Welcome>parser_item.rval;
                         ServerName = rpl_001.serverName;
                         UserName = rpl_001.userName;
                         // ToDo: later
@@ -104,7 +104,7 @@ namespace NBChatController {
 
                 case NBChatCore.ParserReturnItemTypes.Join:
                     {
-                        let join_item: NBChatCore.JoinCls = <NBChatCore.JoinCls>parser_item.rval;
+                        let join_item = <NBChatCore.JoinCls>parser_item.rval;
                         onJoin(join_item.user, join_item.ircmChannelName);
                     }
                     break;
@@ -115,7 +115,7 @@ namespace NBChatController {
 
                 case NBChatCore.ParserReturnItemTypes.Part:
                     {
-                        let part_item: NBChatCore.PartCls = <NBChatCore.PartCls>parser_item.rval;
+                        let part_item = <NBChatCore.PartCls>parser_item.rval;
                         onPart(part_item.nick, part_item.ircmChannelName);
                     }
                     break;
