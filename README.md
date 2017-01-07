@@ -14,7 +14,7 @@ Any help is appreciated :)
 ```sh
  export function parse(raw: string): NBChatCore.CommonParserReturnItem { //-- Function converstion partial complete 26-Dec-2016 HY
  ```
- - When done update the comment to show it is completed. For example:
+ - When done, update the comment to show it is completed. For example:
 ```sh
  function pingReply(s: string) : string { //-- Function converstion completed 25-Dec-2016 HY
  ```
