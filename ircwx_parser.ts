@@ -141,31 +141,59 @@ namespace IRCwxParser {
                 case "part":
                     return { type: NBChatCore.ParserReturnItemTypes.Quit, rval: <NBChatCore.PartCls>{ nick: getNick(toks[0]), ircmChannelName: toks[2] } };
 
-                //case "notice":
-                //    if (toks[0] == ServerName) {
-                //        //Server Message
-                //        if (!_bIsKicked) {
-                //            if (toks[2] == "WARNING" && raw.indexOf("join a chatroom") > 0) GotoRoom();
-                //        }
+                case "notice":
+                    //server warning
+                    //:SrvNamePanther01 NOTICE WARNING :If you do not auth/register yourself/join a chatroom or you will be disconnected.
 
-                //        onNoticeServerMessage(toks.slice(2).join(" "));
-                //    } else if (toks[3].indexOf("%") == 0) {
-                //        //channel broadcast
-                //        onNoticeChanBroadcast(getNick(toks[0]), toks[3], strip(toks.slice(4).join(" ")));
-                //    } else if (toks[2].indexOf("%") < 0) {
-                //        //server broadcast
-                //        if (_bConnectionRegistered == true) onNoticeServerBroadcast(getNick(toks[0]), strip(toks.slice(3).join(" ")));
-                //        else onNoticeServerMessage(toks.slice(2).join(" "));
-                //    } else if (toks[4].indexOf(":") == 0) {
-                //        //private notice
-                //        onNoticePrivate(getNick(toks[0]), toks[2], strip(toks.slice(4).join(" ")));
-                //    } else {
-                //        //normal notice
-                //        onNotice(getNick(toks[0]), toks[2], strip(toks.slice(3).join(" ")));
-                //    }
-                //    break;
+                    //channel broadcast
+                    //:nick!ident@domain NOTICE %#Channel %#Channel :message.
 
-                //    case "kick":
+                    //server broadcast
+                    //:nick!ident@domain NOTICE SrvNamePanther01 :message.
+
+                    //private notice
+                    //:nick!ident@domain NOTICE %#Channel nick_target :message.
+
+                    //normal notice
+                    //:nick!ident@domain NOTICE %#Channel :message.
+
+                    //0: ServerName | Nick
+                    //1: not needed
+                    //2: server_name | notice_keyword | chan_name
+                    //3: chan_name | nick
+
+                    if (toks.length > 4) {
+                        return { type: NBChatCore.ParserReturnItemTypes.Notice, rval: <NBChatCore.NoticeBaseCls>{ t0: toks[0], t1: toks[2], t2: toks[3], t3: toks.slice(4).join(" ") } };
+                    } else if (toks.length > 3) {
+                        return { type: NBChatCore.ParserReturnItemTypes.Notice, rval: <NBChatCore.NoticeBaseCls>{ t0: toks[0], t1: toks[2], t2: toks.slice(3).join(" ") } };
+                    }
+
+                    
+                    
+                    //if (toks[0] == ServerName) {
+                    //    //Server Message
+                    //    if (!_bIsKicked) {
+                    //        if (toks[2] == "WARNING" && raw.indexOf("join a chatroom") > 0) GotoRoom();
+                    //    }
+
+                    //    onNoticeServerMessage(toks.slice(2).join(" "));
+                    //} else if (toks[3].indexOf("%") == 0) {
+                    //    //channel broadcast
+                    //    onNoticeChanBroadcast(getNick(toks[0]), toks[3], strip(toks.slice(4).join(" ")));
+                    //} else if (toks[2].indexOf("%") < 0) {
+                    //    //server broadcast
+                    //    if (_bConnectionRegistered == true) onNoticeServerBroadcast(getNick(toks[0]), strip(toks.slice(3).join(" ")));
+                    //    else onNoticeServerMessage(toks.slice(2).join(" "));
+                    //} else if (toks[4].indexOf(":") == 0) {
+                    //    //private notice
+                    //    onNoticePrivate(getNick(toks[0]), toks[2], strip(toks.slice(4).join(" ")));
+                    //} else {
+                    //    //normal notice
+                    //    onNotice(getNick(toks[0]), toks[2], strip(toks.slice(3).join(" ")));
+                    //}
+                    //break;
+
+                    case "kick":
                 //        if (toks[3].toLowerCase() == this.UserName.toLowerCase()) _bIsKicked = true; //use same case because server is case-insensitve for nicks.
                 //        //Write("MeKicked: KickedNick: " + toks[3] + "; clientNick: " + this.UserName + "; KickedFlag: " + _bIsKicked);
                 //        onKick(getNick(toks[0]), toks[2], toks[3], strip(toks.slice(4).join(" ")));

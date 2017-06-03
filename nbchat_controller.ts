@@ -119,6 +119,10 @@ namespace NBChatController {
                         onPart(part_item.nick, part_item.ircmChannelName);
                     }
                     break;
+
+                case NBChatCore.ParserReturnItemTypes.Notice:
+                    let part_item = <NBChatCore.NoticeBaseCls>parser_item.rval;
+                    break;
             }
         }
     }
