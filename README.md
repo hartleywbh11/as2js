@@ -10,11 +10,14 @@ Any help is appreciated :)
 
 # Modules Overview and Architecture
 **nbchat_connection.ts** - Connections main module.
+
 **nbchat_core.ts** - Core module will be present in almost all other modules; all the common classes, functions, variables should be in this module.
+
 **nbchat_controller.ts** - Controller modules ties and orchestrates functionality in all other modules, it should have only orchestration logic (few minor exceptions are allowable if they make sense).
+
 **ircwx_parser.ts** - parser modules contains parsing code specific to the protocol and returns structs/objects in common format that is understandable by other modules.
 
-#Instructions
+# Instructions
 - Since I'm most familiar with flash/actionscript code, I'll add to .ts files functions to translate.
 - Make a comment next to the function name when you are starting to work on a function so there are no double work or conflicts with other people translating code. For example:
 ```sh
