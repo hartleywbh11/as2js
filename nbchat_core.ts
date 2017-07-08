@@ -103,4 +103,10 @@ namespace NBChatCore {
         // Returned value
         rval: string | Rpl001Welcome | JoinCls | PartCls | NoticeBaseCls;
     }
+
+    export function TrimLeadingColon(s: string): string {
+        if (IsUndefinedOrNull(s)) return s;
+        if (s.length == 0) return s;
+        return (s[0] == ":") ? s.substr(1) : s;
+    }
 }

@@ -36,12 +36,16 @@ namespace NBChatController {
     let onJoin: Function;
     let onQuit: Function;
     let onPart: Function;
+    let onNoticeChanBroadcast: Function;
+    let onNoticeServerBroadcast: Function;
+    let onNoticePrivate: Function;
+    let onNotice: Function;
     // </function_pointers>
 
     // <variables>
     let debugArray: string[] = [];
 
-    let ServerName: string, UserName: string, bConnectionRegistered: boolean;
+    let ServerName: string, UserName: string, bConnectionRegistered: boolean, bIsKicked: boolean;
     // </variables>
 
     function addToDebugArray(s: string): void { // -- Function converstion completed 25-Dec-2016 HY
@@ -72,9 +76,9 @@ namespace NBChatController {
         // Write("received: " + raw_str);
         addToDebugArray("<<:" + raw_str);
 
-        let parser_item: NBChatCore.CommonParserReturnItem = ParserWx.parse(raw_str);
+        let parser_item: NBChatCore.CommonParserReturnItem | null = ParserWx.parse(raw_str);
 
-        if (!IsUndefinedOrNull(parser_item)) {
+        if (parser_item != null) {
 
             switch (parser_item.type) {
                 case NBChatCore.ParserReturnItemTypes.PingReply:
@@ -121,7 +125,34 @@ namespace NBChatController {
                     break;
 
                 case NBChatCore.ParserReturnItemTypes.Notice:
-                    let part_item = <NBChatCore.NoticeBaseCls>parser_item.rval;
+                    {
+                        let notice_item = <NBChatCore.NoticeBaseCls>parser_item.rval;
+                        let text_message = NBChatCore.TrimLeadingColon((notice_item.t3.length == 0) ? notice_item.t2 : notice_item.t3);
+                        //t0: server_name | nick
+                        //t1: server_name | notice_keyword | chan_name
+                        //t2: chan_name | nick | text_message
+                        //t3: text_message
+                        if (notice_item.t0 == ServerName) {
+                            //server message
+                            if (!bIsKicked) {
+                                if (notice_item.t1 == "WARNING" && text_message.indexOf("join a chatroom") > 0) GotoChannel();
+                            }
+                            onNoticeServerMessage(notice_item.t1 + " " + text_message);
+                        } else if (notice_item.t2.indexOf("%") == 0) {
+                            //channel broadcast
+                            onNoticeChanBroadcast(ParserWx.GetNick(notice_item.t0), notice_item.t1, text_message);
+                        } else if (notice_item.t1.indexOf("%") < 0) {
+                            //server broadcast
+                            if (bConnectionRegistered) onNoticeServerBroadcast(ParserWx.GetNick(notice_item.t0), text_message);
+                            else onNoticeServerMessage(notice_item.t1 + " " + text_message);
+                        } else if (notice_item.t3.indexOf(":") < 0) {
+                            //private notice
+                            onNoticePrivate(ParserWx.GetNick(notice_item.t0), notice_item.t1, text_message);
+                        } else {
+                            //notice message general handler
+                            onNotice(ParserWx.GetNick(notice_item.t0), notice_item.t1, text_message)
+                        }
+                    }
                     break;
             }
         }

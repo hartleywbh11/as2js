@@ -25,10 +25,12 @@ namespace IRCwxParser {
     import IRCmUser = NBChatCore.IRCmUser;
     import UserProfileIcons = NBChatCore.UserProfileIcons;
     import UserLevels = NBChatCore.UserLevels;
+    import ParserReturnTypes = NBChatCore.ParserReturnItemTypes;
 
     // ToDo: function getHost(...)
 
-    function getNick(dat: string): string {
+    export function GetNick(dat: string): string {
+        //Note: this not in core because it maybe protocol dependent, hence in ircwx parser module. -- 7-Jul-2017 HY
         return (dat.slice(0, dat.indexOf("!")));
     }
 
@@ -102,7 +104,7 @@ namespace IRCwxParser {
     // ToDo: parseNamesList(...)
 
     // **Important Note: kept "NBChatCore." to show which one is used from core modules/namespace. -- HY 26-Dec-2016
-    export function parse(ircmsg: string): NBChatCore.CommonParserReturnItem { // -- Function converstion partial complete 26-Dec-2016 HY
+    export function parse(ircmsg: string): NBChatCore.CommonParserReturnItem | null { // -- Function converstion partial complete 26-Dec-2016 HY
 
         if (ircmsg.length > 0) {
             let toks: string[] = [];
@@ -113,33 +115,33 @@ namespace IRCwxParser {
 
             switch (toks[0].toLowerCase()) {
                 case "error":
-                    return { type: NBChatCore.ParserReturnItemTypes.IRCwxError, rval: toks.join(" ") };
+                    return { type: ParserReturnTypes.IRCwxError, rval: toks.join(" ") };
 
                 case "ping":
-                    return { type: NBChatCore.ParserReturnItemTypes.PingReply, rval: pingReply(toks[1]) };
+                    return { type: ParserReturnTypes.PingReply, rval: pingReply(toks[1]) };
             }
             // End of switch
 
             switch (toks[1].toLowerCase()) {
                 case "001": // Welcome to the Internet Relay Network
-                    return { type: NBChatCore.ParserReturnItemTypes.RPL_001_WELCOME, rval: <NBChatCore.Rpl001Welcome>{ serverName: toks[0], userName: toks[2] } };
+                    return { type: ParserReturnTypes.RPL_001_WELCOME, rval: <NBChatCore.Rpl001Welcome>{ serverName: toks[0], userName: toks[2] } };
 
                 case "251":
-                    return { type: NBChatCore.ParserReturnItemTypes.RPL_251_LUSERCLIENT, rval: toks.slice(3).join(" ").substr(1) };
+                    return { type: ParserReturnTypes.RPL_251_LUSERCLIENT, rval: toks.slice(3).join(" ").substr(1) };
 
                 case "265":
-                    return { type: NBChatCore.ParserReturnItemTypes.RPL_265_LOCALUSERS, rval: toks.slice(3).join(" ").substr(1) };
+                    return { type: ParserReturnTypes.RPL_265_LOCALUSERS, rval: toks.slice(3).join(" ").substr(1) };
 
                 case "join":
-                    return { type: NBChatCore.ParserReturnItemTypes.Join, rval: parseJoin(toks[0], toks[2], toks[3]) };
+                    return { type: ParserReturnTypes.Join, rval: parseJoin(toks[0], toks[2], toks[3]) };
 
                 case "quit":
-                    return { type: NBChatCore.ParserReturnItemTypes.Quit, rval: getNick(toks[0]) };
+                    return { type: ParserReturnTypes.Quit, rval: GetNick(toks[0]) };
 
                 // *** conversion completed till here.
 
                 case "part":
-                    return { type: NBChatCore.ParserReturnItemTypes.Quit, rval: <NBChatCore.PartCls>{ nick: getNick(toks[0]), ircmChannelName: toks[2] } };
+                    return { type: ParserReturnTypes.Quit, rval: <NBChatCore.PartCls>{ nick: GetNick(toks[0]), ircmChannelName: toks[2] } };
 
                 case "notice":
                     //server warning
@@ -163,36 +165,11 @@ namespace IRCwxParser {
                     //3: chan_name | nick
 
                     if (toks.length > 4) {
-                        return { type: NBChatCore.ParserReturnItemTypes.Notice, rval: <NBChatCore.NoticeBaseCls>{ t0: toks[0], t1: toks[2], t2: toks[3], t3: toks.slice(4).join(" ") } };
+                        return { type: ParserReturnTypes.Notice, rval: <NBChatCore.NoticeBaseCls>{ t0: toks[0], t1: toks[2], t2: toks[3], t3: toks.slice(4).join(" ") } };
                     } else if (toks.length > 3) {
-                        return { type: NBChatCore.ParserReturnItemTypes.Notice, rval: <NBChatCore.NoticeBaseCls>{ t0: toks[0], t1: toks[2], t2: toks.slice(3).join(" ") } };
+                        return { type: ParserReturnTypes.Notice, rval: <NBChatCore.NoticeBaseCls>{ t0: toks[0], t1: toks[2], t2: toks.slice(3).join(" ") } };
                     }
-
                     
-                    
-                    //if (toks[0] == ServerName) {
-                    //    //Server Message
-                    //    if (!_bIsKicked) {
-                    //        if (toks[2] == "WARNING" && raw.indexOf("join a chatroom") > 0) GotoRoom();
-                    //    }
-
-                    //    onNoticeServerMessage(toks.slice(2).join(" "));
-                    //} else if (toks[3].indexOf("%") == 0) {
-                    //    //channel broadcast
-                    //    onNoticeChanBroadcast(getNick(toks[0]), toks[3], strip(toks.slice(4).join(" ")));
-                    //} else if (toks[2].indexOf("%") < 0) {
-                    //    //server broadcast
-                    //    if (_bConnectionRegistered == true) onNoticeServerBroadcast(getNick(toks[0]), strip(toks.slice(3).join(" ")));
-                    //    else onNoticeServerMessage(toks.slice(2).join(" "));
-                    //} else if (toks[4].indexOf(":") == 0) {
-                    //    //private notice
-                    //    onNoticePrivate(getNick(toks[0]), toks[2], strip(toks.slice(4).join(" ")));
-                    //} else {
-                    //    //normal notice
-                    //    onNotice(getNick(toks[0]), toks[2], strip(toks.slice(3).join(" ")));
-                    //}
-                    //break;
-
                     case "kick":
                 //        if (toks[3].toLowerCase() == this.UserName.toLowerCase()) _bIsKicked = true; //use same case because server is case-insensitve for nicks.
                 //        //Write("MeKicked: KickedNick: " + toks[3] + "; clientNick: " + this.UserName + "; KickedFlag: " + _bIsKicked);
@@ -352,6 +329,8 @@ namespace IRCwxParser {
             // End of switch
         }
         // end if
+
+        return null;
     }
 
     //Note: Ping reply is part of ircwx protocol, keep it here. 
