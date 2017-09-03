@@ -31,3 +31,4 @@ Any help is appreciated :)
  - Our Typescript projects follow standard guidelines and conventions of MS Typescript project: https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines . But naming for module local or function local variable like *"let parser_item = ..."* that improves readability is ok.
  - Standard recommendation is to use 'Undefined' but I've added '**IsUndefinedOrNull()**' function to avoid problems out of null vs undefied issue. Use this function to check if object is valid instead of direct checks against 'Undefined.' For further information on null vs undefined see: https://basarat.gitbooks.io/typescript/content/docs/tips/null.html .
  - Use '**let**' instead of 'var'.
+ - Use **parser_item.rval as NBChatCore.UnawayCls** for casting as this is the only form supported by JSX.
